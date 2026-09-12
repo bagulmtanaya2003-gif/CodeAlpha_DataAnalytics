@@ -54,7 +54,7 @@ df.info()
 
 
 # ------------------------------------------------------------
-# 4. Identify Review Column
+# 4. Find Review Column
 # ------------------------------------------------------------
 
 possible_review_columns = [
@@ -76,7 +76,7 @@ for column in possible_review_columns:
 
 if review_column is None:
     raise ValueError(
-        "Review column not found. Please check the column names printed above."
+        "Review column not found. Check the column names printed above."
     )
 
 print("\nReview Column Used:", review_column)
@@ -97,7 +97,7 @@ print(df.shape)
 
 
 # ------------------------------------------------------------
-# 6. Initialize VADER Sentiment Analyzer
+# 6. Initialize Sentiment Analyzer
 # ------------------------------------------------------------
 
 sia = SentimentIntensityAnalyzer()
@@ -128,22 +128,29 @@ def classify_sentiment(score):
         return "Neutral"
 
 
-df["Sentiment"] = df["Compound_Score"].apply(classify_sentiment)
+df["Sentiment"] = df["Compound_Score"].apply(
+    classify_sentiment
+)
 
 
 # ------------------------------------------------------------
-# 9. Display Sentiment Results
+# 9. Sentiment Summary
 # ------------------------------------------------------------
+
+print("\n" + "=" * 60)
+print("SENTIMENT ANALYSIS RESULTS")
+print("=" * 60)
+
+sentiment_counts = df["Sentiment"].value_counts()
 
 print("\nSentiment Counts:")
-print(df["Sentiment"].value_counts())
+print(sentiment_counts)
 
-
-print("\nSentiment Percentages:")
 sentiment_percentage = (
     df["Sentiment"].value_counts(normalize=True) * 100
 )
 
+print("\nSentiment Percentages:")
 print(sentiment_percentage.round(2))
 
 
@@ -160,7 +167,16 @@ print("\nProcessed dataset saved successfully!")
 
 
 # ------------------------------------------------------------
-# 11. Sentiment Distribution
+# 11. Create Results Folder
+# ------------------------------------------------------------
+
+import os
+
+os.makedirs("results", exist_ok=True)
+
+
+# ------------------------------------------------------------
+# 12. Sentiment Distribution Bar Chart
 # ------------------------------------------------------------
 
 plt.figure(figsize=(8, 5))
@@ -176,16 +192,22 @@ plt.ylabel("Number of Reviews")
 
 plt.tight_layout()
 
+plt.savefig(
+    "results/sentiment_distribution.png",
+    dpi=300,
+    bbox_inches="tight"
+)
+
 plt.show()
+
+plt.close()
 
 
 # ------------------------------------------------------------
-# 12. Sentiment Percentage Pie Chart
+# 13. Sentiment Percentage Pie Chart
 # ------------------------------------------------------------
 
 plt.figure(figsize=(7, 7))
-
-sentiment_counts = df["Sentiment"].value_counts()
 
 plt.pie(
     sentiment_counts,
@@ -196,11 +218,21 @@ plt.pie(
 
 plt.title("Percentage Distribution of Sentiments")
 
+plt.tight_layout()
+
+plt.savefig(
+    "results/sentiment_percentage.png",
+    dpi=300,
+    bbox_inches="tight"
+)
+
 plt.show()
+
+plt.close()
 
 
 # ------------------------------------------------------------
-# 13. Sentiment Score Distribution
+# 14. Sentiment Score Distribution
 # ------------------------------------------------------------
 
 plt.figure(figsize=(9, 5))
@@ -217,11 +249,19 @@ plt.ylabel("Number of Reviews")
 
 plt.tight_layout()
 
+plt.savefig(
+    "results/sentiment_scores.png",
+    dpi=300,
+    bbox_inches="tight"
+)
+
 plt.show()
+
+plt.close()
 
 
 # ------------------------------------------------------------
-# 14. Word Cloud
+# 15. Word Cloud
 # ------------------------------------------------------------
 
 all_reviews = " ".join(
@@ -247,11 +287,21 @@ plt.axis("off")
 
 plt.title("Most Common Words in Amazon Reviews")
 
+plt.tight_layout()
+
+plt.savefig(
+    "results/wordcloud.png",
+    dpi=300,
+    bbox_inches="tight"
+)
+
 plt.show()
+
+plt.close()
 
 
 # ------------------------------------------------------------
-# 15. Business Insights
+# 16. Business Insights
 # ------------------------------------------------------------
 
 print("\n" + "=" * 60)
@@ -295,5 +345,7 @@ else:
         "\nInsight: Negative sentiment requires attention."
     )
 
+
+print("\nAll charts saved successfully in the 'results' folder.")
 
 print("\nAnalysis completed successfully!")
